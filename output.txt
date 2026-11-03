@@ -1,0 +1,65 @@
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at google/bert_uncased_L-4_H-256_A-4 and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+                                                text  stars sentiment
+0  I love this stuff. Makes clothes smell so nice...      5  positive
+1  This was as pictured and I needed something la...      3   neutral
+2  I got 2 days shopping and though the bows did ...      3   neutral
+3  Not what I expected. Dosent uncoil well and de...      2  negative
+4  Once I found the hidden cache of hardware it w...      4  positive
+sentiment
+positive    600
+neutral     600
+negative    600
+Name: count, dtype: int64
+LSTM epoch 1 loss 1.077
+LSTM epoch 2 loss 1.057
+LSTM epoch 3 loss 0.974
+LSTM epoch 4 loss 0.933
+LSTM epoch 5 loss 0.683
+LSTM epoch 6 loss 0.572
+LSTM epoch 7 loss 0.461
+LSTM epoch 8 loss 0.46
+BERT epoch 1 loss 1.025
+BERT epoch 2 loss 0.891
+BERT epoch 3 loss 0.952
+
+===== LSTM =====
+accuracy: 0.525
+train time (s): 7.5  parameters: 293379
+              precision    recall  f1-score   support
+
+    negative       0.55      0.65      0.60       120
+     neutral       0.43      0.42      0.43       120
+    positive       0.60      0.50      0.55       120
+
+    accuracy                           0.53       360
+   macro avg       0.53      0.53      0.52       360
+weighted avg       0.53      0.53      0.52       360
+
+[[78 32 10]
+ [39 51 30]
+ [25 35 60]]
+
+===== BERT =====
+accuracy: 0.619
+train time (s): 16.2  parameters: 11171331
+              precision    recall  f1-score   support
+
+    negative       0.60      0.78      0.68       120
+     neutral       0.50      0.49      0.50       120
+    positive       0.81      0.59      0.68       120
+
+    accuracy                           0.62       360
+   macro avg       0.64      0.62      0.62       360
+weighted avg       0.64      0.62      0.62       360
+
+[[93 22  5]
+ [49 59 12]
+ [12 37 71]]
+
+BERT already learned English from millions of sentences, so with only 1440 training reviews
+and 3 epochs it beats an LSTM that has to learn word meanings from scratch (transfer learning).
+Neutral is the hardest class for both models because 3-star reviews mix praise and complaints.
+Deployment: bert-base is ~110M params and slow on CPU, so in production use a small/distilled BERT,
+quantize it, cap max_length, batch requests, or use GPU. LSTM is tiny and fast but less accurate.
+Also watch for data drift (new slang, new products) and retrain periodically.
